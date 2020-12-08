@@ -6,3 +6,12 @@ Logic to parse `kallisto` files from Hong Zheng's [blogpost](https://fishycat.ne
 * `kallisto`
 * `python3`
 * `pandas`
+
+## Usage
+```
+check.py [kallisto index] [samples]
+```
+The sample file must be a CSV file with at least `fq1` and `fq2` as columns.
+
+The program saves a file, `strands.csv` to the current directory. This file is a copy of the sample
+file with an extra column, `strand`, denoting the strand type for each sample.
