@@ -25,6 +25,7 @@ def strand_scoring(uncts, rfcts, frcts):
         return 'unstranded'
 
 def infer_strand(fq1, fq2, idx_fp):
+    print(f"Inferring strand from {fq1}, {fq2}")
     with tempfile.TemporaryDirectory() as tmpdirname:
         fq1_fp = os.path.join(tmpdirname, 'test_1.fq')
         fq2_fp = os.path.join(tmpdirname, 'test_2.fq')
@@ -33,11 +34,11 @@ def infer_strand(fq1, fq2, idx_fp):
         get_reads(fq2, fq2_fp)
 
         sb.run(['kallisto', 'quant', '-i', idx_fp, '-t', '2','-o', os.path.join(tmpdirname, 'un'), 
-                fq1_fp, fq2_fp], stdout=subprocess.DEVNULL)
+                fq1_fp, fq2_fp], stdout=sb.DEVNULL, stderr=sb.DEVNULL)
         sb.run(['kallisto', 'quant', '-i', idx_fp, '-t', '2','-o', os.path.join(tmpdirname, 'rf'), 
-                '--rf-stranded', fq1_fp, fq2_fp], stdout=subprocess.DEVNULL)
+                '--rf-stranded', fq1_fp, fq2_fp], stdout=sb.DEVNULL, stderr=sb.DEVNULL)
         sb.run(['kallisto', 'quant', '-i', idx_fp, '-t', '2','-o', os.path.join(tmpdirname, 'fr'), 
-                '--fr-stranded', fq1_fp, fq2_fp], stdout=subprocess.DEVNULL)
+                '--fr-stranded', fq1_fp, fq2_fp], stdout=sb.DEVNULL, stderr=sb.DEVNULL)
 
         res_fps = [os.path.join(tmpdirname, d, 'abundance.tsv') for d in ['un', 'rf', 'fr']]
         dfs = [pd.read_csv(fp, sep='\t') for fp in res_fps]
@@ -54,7 +55,9 @@ def main():
     for index, row in samples.iterrows():
         res.append(infer_strand(row['fq1'], row['fq2'], idx_fp))
     samples['strand'] = res
-    samples.to_csv('strands.csv', index=False, header=True)
+    fn = samples_fp[0:samples_fp.find('.csv')]
+    outfn = f"{fn}.stranded.csv"
+    samples.to_csv(outfn, index=False, header=True)
 
 if __name__ == '__main__':
     main()
