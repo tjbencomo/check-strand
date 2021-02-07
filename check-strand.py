@@ -67,13 +67,14 @@ def infer_strand(fq1, fq2, idx_fp, nreads=5e4, threads=2):
 
 def main():
     args = get_args()
-    idx_fp = args['index']
-    samples_fp = args['samples']
+    args = vars(args)
+    idx_fp = args['index'][0]
+    samples_fp = args['samples'][0]
     
     samples = pd.read_csv(samples_fp)
     
-    num_reads = args['num-reads']
-    num_threads = args['threads']
+    num_reads = args['num-reads'][0]
+    num_threads = args['threads'][0]
     
     if num_reads is None:
         num_reads = DEFAULT_NREADS
