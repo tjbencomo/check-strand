@@ -73,8 +73,8 @@ def main():
     
     samples = pd.read_csv(samples_fp)
     
-    num_reads = args['num-reads'][0]
-    num_threads = args['threads'][0]
+    num_reads = args['num-reads']
+    num_threads = args['threads']
     
     if num_reads is None:
         num_reads = DEFAULT_NREADS
