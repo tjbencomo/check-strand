@@ -44,6 +44,10 @@ def strand_scoring(uncts, rfcts, frcts):
 
 def infer_strand(fq1, fq2, idx_fp, nreads=5e4, threads=2):
     print(f"Inferring strand from {fq1}, {fq2}")
+    if not os.path.isfile(fq1):
+        raise ValueError(f"{fq1} file not found!")
+    if not os.path.isfile(fq2):
+        raise ValueError(f"{fq2} file not found!")
     with tempfile.TemporaryDirectory() as tmpdirname:
         fq1_fp = os.path.join(tmpdirname, 'test_1.fq')
         fq2_fp = os.path.join(tmpdirname, 'test_2.fq')
@@ -73,13 +77,18 @@ def main():
     
     samples = pd.read_csv(samples_fp)
     
-    num_reads = args['num-reads'][0]
-    num_threads = args['threads'][0]
+    num_reads = args['num-reads']
+    num_threads = args['threads']
     
     if num_reads is None:
         num_reads = DEFAULT_NREADS
     if num_threads is None:
         num_threads = DEFAULT_THREADS
+    else:
+        num_threads = num_threads[0]
+
+    print(f"Using {num_reads} reads to determine stranding!")
+    print(f"Using {num_threads} threads to determine stranding!")
 
     res = []
     for index, row in samples.iterrows():
